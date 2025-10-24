@@ -1,0 +1,31 @@
+﻿name: .NET Tests
+
+on:
+  push:
+    branches: ["main", "master"]
+  pull_request:
+    branches: ["main", "master"]
+  pull_request_target:
+    branches: ["main", "master"]
+
+jobs:
+  test:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.x'
+
+    - name: Restore dependencies
+      run: dotnet restore Bikes/Bikes.sln
+
+    - name: Build
+      run: dotnet build --no-restore --configuration Release lab1/lab1.sln
+
+    - name: Run tests
+      run: dotnet test lab1/Bikes.Tests/Bikes.Tests.csproj --no-build --configuration Release --verbosity normal
