@@ -70,27 +70,26 @@ public class BikesFixture
         var bikes = new List<Bike>();
         var colors = new[] { "Red", "Blue", "Green", "Black", "White", "Yellow" };
 
-        // ‘иксированное распределение моделей дл€ предсказуемости
         var bikeConfigurations = new[]
         {
-            new { ModelIndex = 0, ColorIndex = 0 }, // Sport Pro 1000 - Red
-            new { ModelIndex = 1, ColorIndex = 1 }, // Mountain Extreme - Blue
-            new { ModelIndex = 2, ColorIndex = 2 }, // Road Racer - Green
-            new { ModelIndex = 3, ColorIndex = 3 }, // Sport Elite - Black
-            new { ModelIndex = 4, ColorIndex = 4 }, // Hybrid Comfort - White
-            new { ModelIndex = 5, ColorIndex = 5 }, // Electric City - Yellow
-            new { ModelIndex = 6, ColorIndex = 0 }, // Sport Lightning - Red
-            new { ModelIndex = 7, ColorIndex = 1 }, // Mountain King - Blue
-            new { ModelIndex = 8, ColorIndex = 2 }, // Road Speed - Green
-            new { ModelIndex = 9, ColorIndex = 3 }, // Sport Thunder - Black
-            new { ModelIndex = 10, ColorIndex = 4 }, // Electric Mountain - White
-            new { ModelIndex = 0, ColorIndex = 5 }, // Sport Pro 1000 - Yellow
-            new { ModelIndex = 1, ColorIndex = 0 }, // Mountain Extreme - Red
-            new { ModelIndex = 2, ColorIndex = 1 }, // Road Racer - Blue
-            new { ModelIndex = 3, ColorIndex = 2 }  // Sport Elite - Green
+            new { ModelIndex = 0, ColorIndex = 0 },
+            new { ModelIndex = 1, ColorIndex = 1 },
+            new { ModelIndex = 2, ColorIndex = 2 },
+            new { ModelIndex = 3, ColorIndex = 3 },
+            new { ModelIndex = 4, ColorIndex = 4 },
+            new { ModelIndex = 5, ColorIndex = 5 },
+            new { ModelIndex = 6, ColorIndex = 0 },
+            new { ModelIndex = 7, ColorIndex = 1 },
+            new { ModelIndex = 8, ColorIndex = 2 },
+            new { ModelIndex = 9, ColorIndex = 3 },
+            new { ModelIndex = 10, ColorIndex = 4 },
+            new { ModelIndex = 0, ColorIndex = 5 },
+            new { ModelIndex = 1, ColorIndex = 0 },
+            new { ModelIndex = 2, ColorIndex = 1 },
+            new { ModelIndex = 3, ColorIndex = 2 }
         };
 
-        for (int i = 0; i < bikeConfigurations.Length; i++)
+        for (var i = 0; i < bikeConfigurations.Length; i++)
         {
             var config = bikeConfigurations[i];
             var model = models[config.ModelIndex];
@@ -102,7 +101,7 @@ public class BikesFixture
                 SerialNumber = $"SN{(i + 1):D6}",
                 Model = model,
                 Color = color,
-                IsAvailable = i % 2 == 0 // „етные доступны, нечетные - нет
+                IsAvailable = i % 2 == 0
             });
         }
 

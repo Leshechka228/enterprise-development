@@ -1,132 +1,156 @@
 ﻿using Bikes.Domain.Models;
 
-namespace Bikes.Tests
+namespace Bikes.Tests;
+
+public class BikesTests(BikesFixture fixture) : IClassFixture<BikesFixture>
 {
-    public class BikesTests : IClassFixture<BikesFixture>
+    /// <summary>
+    /// Test for retrieving all sport bikes information
+    /// </summary>
+    [Fact]
+    public void GetAllSportBikes()
     {
-        private readonly BikesFixture _fixture;
+        var sportBikes = fixture.Bikes
+            .Where(b => b.Model.Type == BikeType.Sport)
+            .ToList();
 
-        public BikesTests(BikesFixture fixture)
+        var expectedSportBikeNames = new[]
         {
-            _fixture = fixture;
-        }
+            "Sport Pro 1000", "Sport Elite", "Sport Lightning", "Sport Thunder"
+        };
+        var expectedCount = 6;
 
-        /// <summary>
-        /// Test for retrieving all sport bikes information
-        /// </summary>
-        [Fact]
-        public void GetAllSportBikes()
-        {
-            var sportBikes = _fixture.Bikes
-                .Where(b => b.Model.Type == BikeType.Sport)
-                .ToList();
+        Assert.NotNull(sportBikes);
+        Assert.Equal(expectedCount, sportBikes.Count);
+        Assert.All(sportBikes, bike => Assert.Equal(BikeType.Sport, bike.Model.Type));
+        Assert.All(sportBikes, bike => Assert.Contains(bike.Model.Name, expectedSportBikeNames));
+    }
 
-            Assert.NotNull(sportBikes);
-            Assert.All(sportBikes, bike => Assert.Equal(BikeType.Sport, bike.Model.Type));
-        }
-
-        /// <summary>
-        /// Test for retrieving top 5 bike models by rental profit
-        /// </summary>
-        [Fact]
-        public void Top5ModelsByProfit()
-        {
-            var topModelsByProfit = _fixture.Rents
-                .GroupBy(r => r.Bike.Model)
-                .Select(g => new
-                {
-                    Model = g.Key,
-                    TotalProfit = g.Sum(r => r.TotalCost)
-                })
-                .OrderByDescending(x => x.TotalProfit)
-                .Take(5)
-                .ToList();
-
-            Assert.NotNull(topModelsByProfit);
-            Assert.True(topModelsByProfit.Count <= 5);
-        }
-
-        /// <summary>
-        /// Test for retrieving top 5 bike models by rental duration
-        /// </summary>
-        [Fact]
-        public void Top5ModelsByRentalDuration()
-        {
-            var topModelsByDuration = _fixture.Rents
-                .GroupBy(r => r.Bike.Model)
-                .Select(g => new
-                {
-                    Model = g.Key,
-                    TotalDuration = g.Sum(r => r.DurationHours)
-                })
-                .OrderByDescending(x => x.TotalDuration)
-                .Take(5)
-                .ToList();
-
-            Assert.NotNull(topModelsByDuration);
-            Assert.True(topModelsByDuration.Count <= 5);
-        }
-
-        /// <summary>
-        /// Test for rental statistics - min, max and average rental duration
-        /// </summary>
-        [Fact]
-        public void RentalStatistics()
-        {
-            var durations = _fixture.Rents.Select(r => r.DurationHours).ToList();
-
-            var minDuration = durations.Min();
-            var maxDuration = durations.Max();
-            var avgDuration = durations.Average();
-
-            Assert.Equal(2, minDuration);
-            Assert.Equal(15, maxDuration);
-            Assert.Equal(7, avgDuration);
-        }
-
-        /// <summary>
-        /// Test for total rental time by bike type
-        /// </summary>
-        [Theory]
-        [InlineData(BikeType.Sport, 49)]
-        [InlineData(BikeType.Mountain, 16)]
-        [InlineData(BikeType.Road, 36)]
-        [InlineData(BikeType.Hybrid, 13)]
-        [InlineData(BikeType.Electric, 26)]
-        public void TotalRentalTimeByBikeType(BikeType bikeType, int expectedTotalTime)
-        {
-            var actualTotalTime = _fixture.Rents
-                .Where(r => r.Bike.Model.Type == bikeType)
-                .Sum(r => r.DurationHours);
-
-            Assert.Equal(expectedTotalTime, actualTotalTime);
-        }
-
-        /// <summary>
-        /// Test for top renters by rental count
-        /// </summary>
-        [Fact]
-        public void TopRentersByRentalCount()
-        {
-            var topRenters = _fixture.Rents
-                .GroupBy(r => r.Renter)
-                .Select(g => new
-                {
-                    Renter = g.Key,
-                    RentalCount = g.Count()
-                })
-                .OrderByDescending(x => x.RentalCount)
-                .Take(5)
-                .ToList();
-
-            Assert.NotNull(topRenters);
-            Assert.True(topRenters.Count <= 5);
-
-            if (topRenters.Count > 0)
+    /// <summary>
+    /// Test for retrieving top 5 bike models by rental profit
+    /// </summary>
+    [Fact]
+    public void Top5ModelsByProfit()
+    {
+        var topModelsByProfit = fixture.Rents
+            .GroupBy(r => r.Bike.Model)
+            .Select(g => new
             {
-                var maxRentalCount = topRenters.Max(x => x.RentalCount);
-                Assert.True(topRenters[0].RentalCount == maxRentalCount);
-            }
+                Model = g.Key,
+                TotalProfit = g.Sum(r => r.TotalCost)
+            })
+            .OrderByDescending(x => x.TotalProfit)
+            .Take(5)
+            .ToList();
+
+        var expectedCount = 5;
+        var expectedTopModel = "Electric Mountain";
+
+        Assert.NotNull(topModelsByProfit);
+        Assert.True(topModelsByProfit.Count <= expectedCount);
+        Assert.Equal(expectedCount, topModelsByProfit.Count);
+        Assert.Equal(expectedTopModel, topModelsByProfit.First().Model.Name);
+    }
+
+    /// <summary>
+    /// Test for retrieving top 5 bike models by rental duration
+    /// </summary>
+    [Fact]
+    public void Top5ModelsByRentalDuration()
+    {
+        var topModelsByDuration = fixture.Rents
+            .GroupBy(r => r.Bike.Model)
+            .Select(g => new
+            {
+                Model = g.Key,
+                TotalDuration = g.Sum(r => r.DurationHours)
+            })
+            .OrderByDescending(x => x.TotalDuration)
+            .Take(5)
+            .ToList();
+
+        var expectedCount = 5;
+        var expectedTopModel = "Sport Lightning";
+        var expectedTopDuration = 19;
+
+        Assert.NotNull(topModelsByDuration);
+        Assert.True(topModelsByDuration.Count <= expectedCount);
+        Assert.Equal(expectedCount, topModelsByDuration.Count);
+        Assert.Equal(expectedTopModel, topModelsByDuration.First().Model.Name);
+        Assert.Equal(expectedTopDuration, topModelsByDuration.First().TotalDuration);
+    }
+
+    /// <summary>
+    /// Test for rental statistics - min, max and average rental duration
+    /// </summary>
+    [Fact]
+    public void RentalStatistics()
+    {
+        var durations = fixture.Rents.Select(r => r.DurationHours).ToList();
+
+        var minDuration = durations.Min();
+        var maxDuration = durations.Max();
+        var avgDuration = durations.Average();
+
+        
+        var expectedMinDuration = 2;
+        var expectedMaxDuration = 15;
+        var expectedAvgDuration = 7;
+
+        Assert.Equal(expectedMinDuration, minDuration);
+        Assert.Equal(expectedMaxDuration, maxDuration);
+        Assert.Equal(expectedAvgDuration, avgDuration);
+    }
+
+    /// <summary>
+    /// Test for total rental time by bike type
+    /// </summary>
+    [Theory]
+    [InlineData(BikeType.Sport, 49)]
+    [InlineData(BikeType.Mountain, 16)]
+    [InlineData(BikeType.Road, 36)]
+    [InlineData(BikeType.Hybrid, 13)]
+    [InlineData(BikeType.Electric, 26)]
+    public void TotalRentalTimeByBikeType(BikeType bikeType, int expectedTotalTime)
+    {
+        var actualTotalTime = fixture.Rents
+            .Where(r => r.Bike.Model.Type == bikeType)
+            .Sum(r => r.DurationHours);
+
+        Assert.Equal(expectedTotalTime, actualTotalTime);
+    }
+
+    /// <summary>
+    /// Test for top renters by rental count
+    /// </summary>
+    [Fact]
+    public void TopRentersByRentalCount()
+    {
+        var topRenters = fixture.Rents
+            .GroupBy(r => r.Renter)
+            .Select(g => new
+            {
+                Renter = g.Key,
+                RentalCount = g.Count()
+            })
+            .OrderByDescending(x => x.RentalCount)
+            .Take(5)
+            .ToList();
+
+        var expectedCount = 5;
+        var expectedTopRenterName = "Ivanov Ivan";
+        var expectedMaxRentalCount = 2;
+
+        Assert.NotNull(topRenters);
+        Assert.True(topRenters.Count <= expectedCount);
+        Assert.Equal(expectedCount, topRenters.Count);
+        Assert.Equal(expectedTopRenterName, topRenters[0].Renter.FullName);
+        Assert.Equal(expectedMaxRentalCount, topRenters[0].RentalCount);
+
+        if (topRenters.Count > 0)
+        {
+            var maxRentalCount = topRenters.Max(x => x.RentalCount);
+            Assert.True(topRenters[0].RentalCount == maxRentalCount);
         }
     }
 }
