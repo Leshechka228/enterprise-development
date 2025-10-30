@@ -7,43 +7,31 @@ namespace Bikes.Application.Services;
 /// </summary>
 public interface IBikeRepository
 {
-    /// <summary>
-    /// Get all bikes
-    /// </summary>
+    // Bike methods
     public List<Bike> GetAllBikes();
-
-    /// <summary>
-    /// Get bike by identifier
-    /// </summary>
     public Bike? GetBikeById(int id);
-
-    /// <summary>
-    /// Add new bike
-    /// </summary>
     public void AddBike(Bike bike);
-
-    /// <summary>
-    /// Update bike
-    /// </summary>
     public void UpdateBike(Bike bike);
-
-    /// <summary>
-    /// Delete bike by identifier
-    /// </summary>
     public void DeleteBike(int id);
 
-    /// <summary>
-    /// Get all bike models
-    /// </summary>
+    // BikeModel methods
     public List<BikeModel> GetAllModels();
+    public BikeModel? GetModelById(int id);
+    public void AddModel(BikeModel model);
+    public void UpdateModel(BikeModel model);
+    public void DeleteModel(int id);
 
-    /// <summary>
-    /// Get all rental records
-    /// </summary>
-    public List<Rent> GetAllRents();
-
-    /// <summary>
-    /// Get all renters
-    /// </summary>
+    // Renter methods
     public List<Renter> GetAllRenters();
+    public Renter? GetRenterById(int id);
+    public void AddRenter(Renter renter);
+    public void UpdateRenter(Renter renter);
+    public void DeleteRenter(int id);
+
+    // Rent methods
+    public List<Rent> GetAllRents();
+    public Rent? GetRentById(int id);
+    public void AddRent(Rent rent);
+    public void UpdateRent(Rent rent);
+    public void DeleteRent(int id);
 }

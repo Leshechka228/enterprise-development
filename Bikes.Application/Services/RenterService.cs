@@ -28,7 +28,7 @@ public class RenterService(IBikeRepository repository) : IRenterService
     /// </summary>
     public RenterDto? GetRenterById(int id)
     {
-        var renter = _repository.GetAllRenters().FirstOrDefault(r => r.Id == id);
+        var renter = _repository.GetRenterById(id);
         return renter == null ? null : new RenterDto
         {
             Id = renter.Id,
@@ -45,13 +45,12 @@ public class RenterService(IBikeRepository repository) : IRenterService
         var renters = _repository.GetAllRenters();
         var newRenter = new Renter
         {
-            Id = renters.Max(r => r.Id) + 1,
+            Id = renters.Count > 0 ? renters.Max(r => r.Id) + 1 : 1,
             FullName = request.FullName,
             Phone = request.Phone
         };
 
-        // Note: In real application, we would add to repository
-        // _repository.AddRenter(newRenter);
+        _repository.AddRenter(newRenter);
 
         return new RenterDto
         {
@@ -66,12 +65,13 @@ public class RenterService(IBikeRepository repository) : IRenterService
     /// </summary>
     public RenterDto? UpdateRenter(int id, RenterCreateUpdateDto request)
     {
-        var renters = _repository.GetAllRenters();
-        var renter = renters.FirstOrDefault(r => r.Id == id);
+        var renter = _repository.GetRenterById(id);
         if (renter == null) return null;
 
         renter.FullName = request.FullName;
         renter.Phone = request.Phone;
+
+        _repository.UpdateRenter(renter);
 
         return new RenterDto
         {
@@ -86,10 +86,10 @@ public class RenterService(IBikeRepository repository) : IRenterService
     /// </summary>
     public bool DeleteRenter(int id)
     {
-        var renters = _repository.GetAllRenters();
-        var renter = renters.FirstOrDefault(r => r.Id == id);
-        return renter != null;
-        // Note: In real application, we would remove from repository
-        // return _repository.DeleteRenter(id);
+        var renter = _repository.GetRenterById(id);
+        if (renter == null) return false;
+
+        _repository.DeleteRenter(id);
+        return true;
     }
 }
