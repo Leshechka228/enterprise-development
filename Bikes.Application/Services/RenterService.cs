@@ -1,5 +1,6 @@
 ﻿using Bikes.Application.Contracts.Renters;
 using Bikes.Domain.Models;
+using Bikes.Domain.Repositories;
 
 namespace Bikes.Application.Services;
 
@@ -8,27 +9,25 @@ namespace Bikes.Application.Services;
 /// </summary>
 public class RenterService(IBikeRepository repository) : IRenterService
 {
-    private readonly IBikeRepository _repository = repository;
-
     /// <summary>
     /// Get all renters
     /// </summary>
-    public List<RenterDto> GetAllRenters()
+    public List<RenterDto> GetAll()
     {
-        return _repository.GetAllRenters().Select(r => new RenterDto
+        return [.. repository.GetAllRenters().Select(r => new RenterDto
         {
             Id = r.Id,
             FullName = r.FullName,
             Phone = r.Phone
-        }).ToList();
+        })];
     }
 
     /// <summary>
     /// Get renter by identifier
     /// </summary>
-    public RenterDto? GetRenterById(int id)
+    public RenterDto? GetById(int id)
     {
-        var renter = _repository.GetRenterById(id);
+        var renter = repository.GetRenterById(id);
         return renter == null ? null : new RenterDto
         {
             Id = renter.Id,
@@ -40,9 +39,11 @@ public class RenterService(IBikeRepository repository) : IRenterService
     /// <summary>
     /// Create new renter
     /// </summary>
-    public RenterDto CreateRenter(RenterCreateUpdateDto request)
+    public RenterDto Create(RenterCreateUpdateDto request)
     {
-        var renters = _repository.GetAllRenters();
+        ArgumentNullException.ThrowIfNull(request);
+
+        var renters = repository.GetAllRenters();
         var newRenter = new Renter
         {
             Id = renters.Count > 0 ? renters.Max(r => r.Id) + 1 : 1,
@@ -50,7 +51,7 @@ public class RenterService(IBikeRepository repository) : IRenterService
             Phone = request.Phone
         };
 
-        _repository.AddRenter(newRenter);
+        repository.AddRenter(newRenter);
 
         return new RenterDto
         {
@@ -63,15 +64,17 @@ public class RenterService(IBikeRepository repository) : IRenterService
     /// <summary>
     /// Update renter
     /// </summary>
-    public RenterDto? UpdateRenter(int id, RenterCreateUpdateDto request)
+    public RenterDto? Update(int id, RenterCreateUpdateDto request)
     {
-        var renter = _repository.GetRenterById(id);
+        ArgumentNullException.ThrowIfNull(request);
+
+        var renter = repository.GetRenterById(id);
         if (renter == null) return null;
 
         renter.FullName = request.FullName;
         renter.Phone = request.Phone;
 
-        _repository.UpdateRenter(renter);
+        repository.UpdateRenter(renter);
 
         return new RenterDto
         {
@@ -84,12 +87,12 @@ public class RenterService(IBikeRepository repository) : IRenterService
     /// <summary>
     /// Delete renter
     /// </summary>
-    public bool DeleteRenter(int id)
+    public bool Delete(int id)
     {
-        var renter = _repository.GetRenterById(id);
+        var renter = repository.GetRenterById(id);
         if (renter == null) return false;
 
-        _repository.DeleteRenter(id);
+        repository.DeleteRenter(id);
         return true;
     }
 }

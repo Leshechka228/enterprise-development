@@ -1,6 +1,7 @@
 ﻿using Bikes.Application.Contracts.Analytics;
 using Bikes.Application.Contracts.Bikes;
 using Bikes.Domain.Models;
+using Bikes.Domain.Repositories;
 
 namespace Bikes.Application.Services;
 
@@ -9,14 +10,12 @@ namespace Bikes.Application.Services;
 /// </summary>
 public class AnalyticsService(IBikeRepository repository) : IAnalyticsService
 {
-    private readonly IBikeRepository _repository = repository;
-
     /// <summary>
     /// Get all sport bikes
     /// </summary>
     public List<BikeDto> GetSportBikes()
     {
-        return _repository.GetAllBikes()
+        return [.. repository.GetAllBikes()
             .Where(b => b.Model.Type == BikeType.Sport)
             .Select(b => new BikeDto
             {
@@ -25,8 +24,7 @@ public class AnalyticsService(IBikeRepository repository) : IAnalyticsService
                 ModelId = b.Model.Id,
                 Color = b.Color,
                 IsAvailable = b.IsAvailable
-            })
-            .ToList();
+            })];
     }
 
     /// <summary>
@@ -34,9 +32,9 @@ public class AnalyticsService(IBikeRepository repository) : IAnalyticsService
     /// </summary>
     public List<BikeModelAnalyticsDto> GetTop5ModelsByProfit()
     {
-        var rents = _repository.GetAllRents();
+        var rents = repository.GetAllRents();
 
-        return rents
+        return [.. rents
             .GroupBy(r => r.Bike.Model)
             .Select(g => new BikeModelAnalyticsDto
             {
@@ -48,8 +46,7 @@ public class AnalyticsService(IBikeRepository repository) : IAnalyticsService
                 TotalDuration = g.Sum(r => r.DurationHours)
             })
             .OrderByDescending(x => x.TotalProfit)
-            .Take(5)
-            .ToList();
+            .Take(5)];
     }
 
     /// <summary>
@@ -57,9 +54,9 @@ public class AnalyticsService(IBikeRepository repository) : IAnalyticsService
     /// </summary>
     public List<BikeModelAnalyticsDto> GetTop5ModelsByRentalDuration()
     {
-        var rents = _repository.GetAllRents();
+        var rents = repository.GetAllRents();
 
-        return rents
+        return [.. rents
             .GroupBy(r => r.Bike.Model)
             .Select(g => new BikeModelAnalyticsDto
             {
@@ -71,8 +68,7 @@ public class AnalyticsService(IBikeRepository repository) : IAnalyticsService
                 TotalDuration = g.Sum(r => r.DurationHours)
             })
             .OrderByDescending(x => x.TotalDuration)
-            .Take(5)
-            .ToList();
+            .Take(5)];
     }
 
     /// <summary>
@@ -80,9 +76,8 @@ public class AnalyticsService(IBikeRepository repository) : IAnalyticsService
     /// </summary>
     public RentalStatistics GetRentalStatistics()
     {
-        var durations = _repository.GetAllRents()
-            .Select(r => r.DurationHours)
-            .ToList();
+        var durations = repository.GetAllRents()
+            .Select(r => r.DurationHours);
 
         return new RentalStatistics(
             MinDuration: durations.Min(),
@@ -96,7 +91,7 @@ public class AnalyticsService(IBikeRepository repository) : IAnalyticsService
     /// </summary>
     public Dictionary<string, int> GetTotalRentalTimeByBikeType()
     {
-        return _repository.GetAllRents()
+        return repository.GetAllRents()
             .GroupBy(r => r.Bike.Model.Type)
             .ToDictionary(
                 g => g.Key.ToString(),
@@ -109,7 +104,7 @@ public class AnalyticsService(IBikeRepository repository) : IAnalyticsService
     /// </summary>
     public List<RenterAnalyticsDto> GetTopRentersByRentalCount()
     {
-        return _repository.GetAllRents()
+        return [.. repository.GetAllRents()
             .GroupBy(r => r.Renter)
             .Select(g => new RenterAnalyticsDto
             {
@@ -117,7 +112,6 @@ public class AnalyticsService(IBikeRepository repository) : IAnalyticsService
                 RentalCount = g.Count()
             })
             .OrderByDescending(x => x.RentalCount)
-            .Take(5)
-            .ToList();
+            .Take(5)];
     }
 }

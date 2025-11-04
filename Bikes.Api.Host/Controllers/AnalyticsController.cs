@@ -11,16 +11,21 @@ namespace Bikes.Api.Host.Controllers;
 [Route("api/[controller]")]
 public class AnalyticsController(IAnalyticsService analyticsService) : ControllerBase
 {
-    private readonly IAnalyticsService _analyticsService = analyticsService;
-
     /// <summary>
     /// Get all sport bikes
     /// </summary>
     [HttpGet("sport-bikes")]
     public ActionResult<List<BikeDto>> GetSportBikes()
     {
-        var sportBikes = _analyticsService.GetSportBikes();
-        return Ok(sportBikes);
+        try
+        {
+            var sportBikes = analyticsService.GetSportBikes();
+            return Ok(sportBikes);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
     }
 
     /// <summary>
@@ -29,8 +34,15 @@ public class AnalyticsController(IAnalyticsService analyticsService) : Controlle
     [HttpGet("top-models-by-profit")]
     public ActionResult<List<BikeModelAnalyticsDto>> GetTopModelsByProfit()
     {
-        var topModels = _analyticsService.GetTop5ModelsByProfit();
-        return Ok(topModels);
+        try
+        {
+            var topModels = analyticsService.GetTop5ModelsByProfit();
+            return Ok(topModels);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
     }
 
     /// <summary>
@@ -39,8 +51,15 @@ public class AnalyticsController(IAnalyticsService analyticsService) : Controlle
     [HttpGet("top-models-by-duration")]
     public ActionResult<List<BikeModelAnalyticsDto>> GetTopModelsByDuration()
     {
-        var topModels = _analyticsService.GetTop5ModelsByRentalDuration();
-        return Ok(topModels);
+        try
+        {
+            var topModels = analyticsService.GetTop5ModelsByRentalDuration();
+            return Ok(topModels);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
     }
 
     /// <summary>
@@ -49,8 +68,15 @@ public class AnalyticsController(IAnalyticsService analyticsService) : Controlle
     [HttpGet("rental-statistics")]
     public ActionResult<RentalStatistics> GetRentalStatistics()
     {
-        var statistics = _analyticsService.GetRentalStatistics();
-        return Ok(statistics);
+        try
+        {
+            var statistics = analyticsService.GetRentalStatistics();
+            return Ok(statistics);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
     }
 
     /// <summary>
@@ -59,8 +85,15 @@ public class AnalyticsController(IAnalyticsService analyticsService) : Controlle
     [HttpGet("rental-time-by-type")]
     public ActionResult<Dictionary<string, int>> GetRentalTimeByType()
     {
-        var rentalTime = _analyticsService.GetTotalRentalTimeByBikeType();
-        return Ok(rentalTime);
+        try
+        {
+            var rentalTime = analyticsService.GetTotalRentalTimeByBikeType();
+            return Ok(rentalTime);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
     }
 
     /// <summary>
@@ -69,7 +102,14 @@ public class AnalyticsController(IAnalyticsService analyticsService) : Controlle
     [HttpGet("top-renters")]
     public ActionResult<List<RenterAnalyticsDto>> GetTopRenters()
     {
-        var topRenters = _analyticsService.GetTopRentersByRentalCount();
-        return Ok(topRenters);
+        try
+        {
+            var topRenters = analyticsService.GetTopRentersByRentalCount();
+            return Ok(topRenters);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
     }
 }

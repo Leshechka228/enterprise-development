@@ -1,6 +1,6 @@
 ﻿using Bikes.Domain.Models;
 
-namespace Bikes.Application.Services;
+namespace Bikes.Domain.Repositories;
 
 /// <summary>
 /// Repository for bike data access

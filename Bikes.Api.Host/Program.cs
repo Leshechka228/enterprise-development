@@ -4,6 +4,8 @@ using Bikes.Application.Contracts.Bikes;
 using Bikes.Application.Contracts.Models;
 using Bikes.Application.Contracts.Renters;
 using Bikes.Application.Contracts.Rents;
+using Bikes.Domain.Repositories;
+using Bikes.Infrastructure.InMemory.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,12 +15,12 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Register services with interfaces
-builder.Services.AddScoped<IBikeRepository, InMemoryBikeRepository>();
-builder.Services.AddScoped<IBikeService, BikeService>();
-builder.Services.AddScoped<IBikeModelService, BikeModelService>();
-builder.Services.AddScoped<IRenterService, RenterService>();
-builder.Services.AddScoped<IRentService, RentService>();
-builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
+builder.Services.AddSingleton<IBikeRepository, InMemoryBikeRepository>();
+builder.Services.AddSingleton<IBikeService, BikeService>();
+builder.Services.AddSingleton<IBikeModelService, BikeModelService>();
+builder.Services.AddSingleton<IRenterService, RenterService>();
+builder.Services.AddSingleton<IRentService, RentService>();
+builder.Services.AddSingleton<IAnalyticsService, AnalyticsService>();
 
 var app = builder.Build();
 

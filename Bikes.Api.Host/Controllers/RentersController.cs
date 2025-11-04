@@ -1,5 +1,4 @@
 ﻿using Bikes.Application.Contracts.Renters;
-using Bikes.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bikes.Api.Host.Controllers;
@@ -11,16 +10,21 @@ namespace Bikes.Api.Host.Controllers;
 [Route("api/[controller]")]
 public class RentersController(IRenterService renterService) : CrudControllerBase<RenterDto, RenterCreateUpdateDto>
 {
-    private readonly IRenterService _renterService = renterService;
-
     /// <summary>
     /// Get all renters
     /// </summary>
     [HttpGet]
     public override Task<ActionResult<List<RenterDto>>> GetAll()
     {
-        var renters = _renterService.GetAllRenters();
-        return Task.FromResult<ActionResult<List<RenterDto>>>(Ok(renters));
+        try
+        {
+            var renters = renterService.GetAll();
+            return Task.FromResult<ActionResult<List<RenterDto>>>(Ok(renters));
+        }
+        catch (Exception ex)
+        {
+            return Task.FromResult<ActionResult<List<RenterDto>>>(StatusCode(500, $"Internal server error: {ex.Message}"));
+        }
     }
 
     /// <summary>
@@ -29,37 +33,32 @@ public class RentersController(IRenterService renterService) : CrudControllerBas
     [HttpGet("{id}")]
     public override Task<ActionResult<RenterDto>> GetById(int id)
     {
-        var renter = _renterService.GetRenterById(id);
-        return Task.FromResult<ActionResult<RenterDto>>(renter == null ? NotFound() : Ok(renter));
+        try
+        {
+            var renter = renterService.GetById(id);
+            return Task.FromResult<ActionResult<RenterDto>>(renter == null ? NotFound() : Ok(renter));
+        }
+        catch (Exception ex)
+        {
+            return Task.FromResult<ActionResult<RenterDto>>(StatusCode(500, $"Internal server error: {ex.Message}"));
+        }
     }
 
-    /// <summary>
-    /// Create new renter
-    /// </summary>
-    [HttpPost]
-    public override Task<ActionResult<RenterDto>> Create([FromBody] RenterCreateUpdateDto request)
+    protected override Task<ActionResult<RenterDto>> CreateInternal(RenterCreateUpdateDto request)
     {
-        var renter = _renterService.CreateRenter(request);
+        var renter = renterService.Create(request);
         return Task.FromResult<ActionResult<RenterDto>>(CreatedAtAction(nameof(GetById), new { id = renter.Id }, renter));
     }
 
-    /// <summary>
-    /// Update renter
-    /// </summary>
-    [HttpPut("{id}")]
-    public override Task<ActionResult<RenterDto>> Update(int id, [FromBody] RenterCreateUpdateDto request)
+    protected override Task<ActionResult<RenterDto>> UpdateInternal(int id, RenterCreateUpdateDto request)
     {
-        var renter = _renterService.UpdateRenter(id, request);
+        var renter = renterService.Update(id, request);
         return Task.FromResult<ActionResult<RenterDto>>(renter == null ? NotFound() : Ok(renter));
     }
 
-    /// <summary>
-    /// Delete renter
-    /// </summary>
-    [HttpDelete("{id}")]
-    public override Task<ActionResult> Delete(int id)
+    protected override Task<ActionResult> DeleteInternal(int id)
     {
-        var result = _renterService.DeleteRenter(id);
+        var result = renterService.Delete(id);
         return Task.FromResult<ActionResult>(result ? NoContent() : NotFound());
     }
 }

@@ -1,12 +1,11 @@
-﻿using Bikes.Application.Contracts;
-using Bikes.Application.Contracts.Bikes;
+﻿using Bikes.Application.Contracts.Bikes;
 
 namespace Bikes.Application.Contracts.Analytics;
 
 /// <summary>
 /// Service for bike rental analytics
 /// </summary>
-public interface IAnalyticsService : IApplicationService
+public interface IAnalyticsService
 {
     /// <summary>
     /// Get all sport bikes

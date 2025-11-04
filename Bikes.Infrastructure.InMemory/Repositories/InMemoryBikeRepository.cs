@@ -1,7 +1,8 @@
 ﻿using Bikes.Domain.Models;
+using Bikes.Domain.Repositories;
 using Bikes.Tests;
 
-namespace Bikes.Application.Services;
+namespace Bikes.Infrastructure.InMemory.Repositories;
 
 /// <summary>
 /// In-memory implementation of bike repository
@@ -20,17 +21,13 @@ public class InMemoryBikeRepository() : IBikeRepository
 
     public void AddBike(Bike bike)
     {
-        if (bike == null)
-            throw new ArgumentNullException(nameof(bike));
-
+        ArgumentNullException.ThrowIfNull(bike);
         _bikes.Add(bike);
     }
 
     public void UpdateBike(Bike bike)
     {
-        if (bike == null)
-            throw new ArgumentNullException(nameof(bike));
-
+        ArgumentNullException.ThrowIfNull(bike);
         var existingBike = _bikes.FirstOrDefault(b => b.Id == bike.Id);
         if (existingBike != null)
         {
@@ -48,17 +45,13 @@ public class InMemoryBikeRepository() : IBikeRepository
 
     public void AddModel(BikeModel model)
     {
-        if (model == null)
-            throw new ArgumentNullException(nameof(model));
-
+        ArgumentNullException.ThrowIfNull(model);
         _models.Add(model);
     }
 
     public void UpdateModel(BikeModel model)
     {
-        if (model == null)
-            throw new ArgumentNullException(nameof(model));
-
+        ArgumentNullException.ThrowIfNull(model);
         var existingModel = _models.FirstOrDefault(m => m.Id == model.Id);
         if (existingModel != null)
         {
@@ -76,17 +69,13 @@ public class InMemoryBikeRepository() : IBikeRepository
 
     public void AddRenter(Renter renter)
     {
-        if (renter == null)
-            throw new ArgumentNullException(nameof(renter));
-
+        ArgumentNullException.ThrowIfNull(renter);
         _renters.Add(renter);
     }
 
     public void UpdateRenter(Renter renter)
     {
-        if (renter == null)
-            throw new ArgumentNullException(nameof(renter));
-
+        ArgumentNullException.ThrowIfNull(renter);
         var existingRenter = _renters.FirstOrDefault(r => r.Id == renter.Id);
         if (existingRenter != null)
         {
@@ -104,17 +93,13 @@ public class InMemoryBikeRepository() : IBikeRepository
 
     public void AddRent(Rent rent)
     {
-        if (rent == null)
-            throw new ArgumentNullException(nameof(rent));
-
+        ArgumentNullException.ThrowIfNull(rent);
         _rents.Add(rent);
     }
 
     public void UpdateRent(Rent rent)
     {
-        if (rent == null)
-            throw new ArgumentNullException(nameof(rent));
-
+        ArgumentNullException.ThrowIfNull(rent);
         var existingRent = _rents.FirstOrDefault(r => r.Id == rent.Id);
         if (existingRent != null)
         {

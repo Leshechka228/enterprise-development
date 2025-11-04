@@ -1,5 +1,6 @@
 ﻿using Bikes.Application.Contracts.Rents;
 using Bikes.Domain.Models;
+using Bikes.Domain.Repositories;
 
 namespace Bikes.Application.Services;
 
@@ -8,14 +9,12 @@ namespace Bikes.Application.Services;
 /// </summary>
 public class RentService(IBikeRepository repository) : IRentService
 {
-    private readonly IBikeRepository _repository = repository;
-
     /// <summary>
     /// Get all rents
     /// </summary>
-    public List<RentDto> GetAllRents()
+    public List<RentDto> GetAll()
     {
-        return _repository.GetAllRents().Select(r => new RentDto
+        return [.. repository.GetAllRents().Select(r => new RentDto
         {
             Id = r.Id,
             BikeId = r.Bike.Id,
@@ -23,15 +22,15 @@ public class RentService(IBikeRepository repository) : IRentService
             StartTime = r.StartTime,
             DurationHours = r.DurationHours,
             TotalCost = r.TotalCost
-        }).ToList();
+        })];
     }
 
     /// <summary>
     /// Get rent by identifier
     /// </summary>
-    public RentDto? GetRentById(int id)
+    public RentDto? GetById(int id)
     {
-        var rent = _repository.GetAllRents().FirstOrDefault(r => r.Id == id);
+        var rent = repository.GetRentById(id);
         return rent == null ? null : new RentDto
         {
             Id = rent.Id,
@@ -46,14 +45,13 @@ public class RentService(IBikeRepository repository) : IRentService
     /// <summary>
     /// Create new rent
     /// </summary>
-    public RentDto CreateRent(RentCreateUpdateDto request)
+    public RentDto Create(RentCreateUpdateDto request)
     {
-        var bikes = _repository.GetAllBikes();
-        var renters = _repository.GetAllRenters();
-        var rents = _repository.GetAllRents();
+        ArgumentNullException.ThrowIfNull(request);
 
-        var bike = bikes.FirstOrDefault(b => b.Id == request.BikeId);
-        var renter = renters.FirstOrDefault(r => r.Id == request.RenterId);
+        var bike = repository.GetBikeById(request.BikeId);
+        var renter = repository.GetRenterById(request.RenterId);
+        var rents = repository.GetAllRents();
 
         if (bike == null)
             throw new InvalidOperationException("Bike not found");
@@ -69,6 +67,8 @@ public class RentService(IBikeRepository repository) : IRentService
             DurationHours = request.DurationHours
         };
 
+        repository.AddRent(newRent);
+
         return new RentDto
         {
             Id = newRent.Id,
@@ -83,17 +83,15 @@ public class RentService(IBikeRepository repository) : IRentService
     /// <summary>
     /// Update rent
     /// </summary>
-    public RentDto? UpdateRent(int id, RentCreateUpdateDto request)
+    public RentDto? Update(int id, RentCreateUpdateDto request)
     {
-        var rents = _repository.GetAllRents();
-        var rent = rents.FirstOrDefault(r => r.Id == id);
+        ArgumentNullException.ThrowIfNull(request);
+
+        var rent = repository.GetRentById(id);
         if (rent == null) return null;
 
-        var bikes = _repository.GetAllBikes();
-        var renters = _repository.GetAllRenters();
-
-        var bike = bikes.FirstOrDefault(b => b.Id == request.BikeId);
-        var renter = renters.FirstOrDefault(r => r.Id == request.RenterId);
+        var bike = repository.GetBikeById(request.BikeId);
+        var renter = repository.GetRenterById(request.RenterId);
 
         if (bike == null)
             throw new InvalidOperationException("Bike not found");
@@ -104,6 +102,8 @@ public class RentService(IBikeRepository repository) : IRentService
         rent.Renter = renter;
         rent.StartTime = request.StartTime;
         rent.DurationHours = request.DurationHours;
+
+        repository.UpdateRent(rent);
 
         return new RentDto
         {
@@ -119,10 +119,12 @@ public class RentService(IBikeRepository repository) : IRentService
     /// <summary>
     /// Delete rent
     /// </summary>
-    public bool DeleteRent(int id)
+    public bool Delete(int id)
     {
-        var rents = _repository.GetAllRents();
-        var rent = rents.FirstOrDefault(r => r.Id == id);
-        return rent != null;
+        var rent = repository.GetRentById(id);
+        if (rent == null) return false;
+
+        repository.DeleteRent(id);
+        return true;
     }
 }
