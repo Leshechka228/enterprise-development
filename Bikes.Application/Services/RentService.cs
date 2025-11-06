@@ -90,13 +90,10 @@ public class RentService(IBikeRepository repository) : IRentService
         var rent = repository.GetRentById(id);
         if (rent == null) return null;
 
-        var bike = repository.GetBikeById(request.BikeId);
-        var renter = repository.GetRenterById(request.RenterId);
-
-        if (bike == null)
-            throw new InvalidOperationException("Bike not found");
-        if (renter == null)
-            throw new InvalidOperationException("Renter not found");
+        var bike = repository.GetBikeById(request.BikeId)
+            ?? throw new InvalidOperationException("Bike not found");
+        var renter = repository.GetRenterById(request.RenterId)
+            ?? throw new InvalidOperationException("Renter not found");
 
         rent.Bike = bike;
         rent.Renter = renter;

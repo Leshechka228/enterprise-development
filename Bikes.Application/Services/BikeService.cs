@@ -48,9 +48,8 @@ public class BikeService(IBikeRepository repository) : IBikeService
         ArgumentNullException.ThrowIfNull(request);
 
         var models = repository.GetAllModels();
-        var model = models.FirstOrDefault(m => m.Id == request.ModelId);
-        if (model == null)
-            throw new InvalidOperationException("Model not found");
+        var model = models.FirstOrDefault(m => m.Id == request.ModelId)
+            ?? throw new InvalidOperationException("Model not found");
 
         var newBike = new Bike
         {
@@ -84,9 +83,8 @@ public class BikeService(IBikeRepository repository) : IBikeService
         if (bike == null) return null;
 
         var models = repository.GetAllModels();
-        var model = models.FirstOrDefault(m => m.Id == request.ModelId);
-        if (model == null)
-            throw new InvalidOperationException("Model not found");
+        var model = models.FirstOrDefault(m => m.Id == request.ModelId)
+            ?? throw new InvalidOperationException("Model not found");
 
         bike.SerialNumber = request.SerialNumber;
         bike.Model = model;
