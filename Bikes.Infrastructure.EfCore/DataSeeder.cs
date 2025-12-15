@@ -1,5 +1,4 @@
 ﻿using Bikes.Domain.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace Bikes.Infrastructure.EfCore;
 
