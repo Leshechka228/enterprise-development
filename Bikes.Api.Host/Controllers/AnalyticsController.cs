@@ -15,6 +15,8 @@ public class AnalyticsController(IAnalyticsService analyticsService) : Controlle
     /// Get all sport bikes
     /// </summary>
     [HttpGet("sport-bikes")]
+    [ProducesResponseType(typeof(List<BikeDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public ActionResult<List<BikeDto>> GetSportBikes()
     {
         try
@@ -32,6 +34,8 @@ public class AnalyticsController(IAnalyticsService analyticsService) : Controlle
     /// Get top 5 models by profit
     /// </summary>
     [HttpGet("top-models-by-profit")]
+    [ProducesResponseType(typeof(List<BikeModelAnalyticsDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public ActionResult<List<BikeModelAnalyticsDto>> GetTopModelsByProfit()
     {
         try
@@ -49,6 +53,8 @@ public class AnalyticsController(IAnalyticsService analyticsService) : Controlle
     /// Get top 5 models by rental duration
     /// </summary>
     [HttpGet("top-models-by-duration")]
+    [ProducesResponseType(typeof(List<BikeModelAnalyticsDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public ActionResult<List<BikeModelAnalyticsDto>> GetTopModelsByDuration()
     {
         try
@@ -66,6 +72,8 @@ public class AnalyticsController(IAnalyticsService analyticsService) : Controlle
     /// Get rental statistics
     /// </summary>
     [HttpGet("rental-statistics")]
+    [ProducesResponseType(typeof(RentalStatistics), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public ActionResult<RentalStatistics> GetRentalStatistics()
     {
         try
@@ -83,6 +91,8 @@ public class AnalyticsController(IAnalyticsService analyticsService) : Controlle
     /// Get total rental time by bike type
     /// </summary>
     [HttpGet("rental-time-by-type")]
+    [ProducesResponseType(typeof(Dictionary<string, int>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public ActionResult<Dictionary<string, int>> GetRentalTimeByType()
     {
         try
@@ -100,6 +110,8 @@ public class AnalyticsController(IAnalyticsService analyticsService) : Controlle
     /// Get top renters by rental count
     /// </summary>
     [HttpGet("top-renters")]
+    [ProducesResponseType(typeof(List<RenterAnalyticsDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public ActionResult<List<RenterAnalyticsDto>> GetTopRenters()
     {
         try

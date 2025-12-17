@@ -14,6 +14,7 @@ public class Bike
     /// </summary>
     [Key]
     [Column("id")]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
 
     /// <summary>
@@ -21,7 +22,7 @@ public class Bike
     /// </summary>
     [Required]
     [Column("serial_number")]
-    public required string SerialNumber { get; set; }
+    public string SerialNumber { get; set; } = null!;
 
     /// <summary>
     /// Foreign key for bike model
@@ -40,7 +41,7 @@ public class Bike
     /// </summary>
     [Required]
     [Column("color")]
-    public required string Color { get; set; }
+    public string Color { get; set; } = null!;
 
     /// <summary>
     /// Availability status for rental
@@ -52,5 +53,5 @@ public class Bike
     /// <summary>
     /// Navigation property for rents
     /// </summary>
-    public virtual List<Rent> Rents { get; set; } = new();
+    public virtual List<Rent> Rents { get; set; } = [];
 }

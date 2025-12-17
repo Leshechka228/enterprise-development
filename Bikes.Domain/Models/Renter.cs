@@ -21,17 +21,17 @@ public class Renter
     /// </summary>
     [Required]
     [Column("full_name")]
-    public required string FullName { get; set; }
+    public string FullName { get; set; } = null!;
 
     /// <summary>
     /// Contact phone number
     /// </summary>
     [Required]
     [Column("phone")]
-    public required string Phone { get; set; }
+    public string Phone { get; set; } = null!;
 
     /// <summary>
     /// Navigation property for rents
     /// </summary>
-    public virtual List<Rent> Rents { get; set; } = new();
+    public virtual List<Rent> Rents { get; set; } = [];
 }

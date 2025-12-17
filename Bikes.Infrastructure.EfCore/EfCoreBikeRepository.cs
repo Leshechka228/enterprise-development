@@ -62,7 +62,13 @@ public class EfCoreBikeRepository(BikesDbContext context) : IBikeRepository
             context.SaveChanges();
         }
     }
+}
 
+/// <summary>
+/// EF Core implementation of bike model repository
+/// </summary>
+public class EfCoreBikeModelRepository(BikesDbContext context) : IBikeModelRepository
+{
     /// <summary>
     /// Get all bike models
     /// </summary>
@@ -113,7 +119,13 @@ public class EfCoreBikeRepository(BikesDbContext context) : IBikeRepository
             context.SaveChanges();
         }
     }
+}
 
+/// <summary>
+/// EF Core implementation of renter repository
+/// </summary>
+public class EfCoreRenterRepository(BikesDbContext context) : IRenterRepository
+{
     /// <summary>
     /// Get all renters
     /// </summary>
@@ -164,7 +176,13 @@ public class EfCoreBikeRepository(BikesDbContext context) : IBikeRepository
             context.SaveChanges();
         }
     }
+}
 
+/// <summary>
+/// EF Core implementation of rent repository
+/// </summary>
+public class EfCoreRentRepository(BikesDbContext context) : IRentRepository
+{
     /// <summary>
     /// Get all rents
     /// </summary>

@@ -1,4 +1,5 @@
 ﻿using Bikes.Domain.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Bikes.Infrastructure.EfCore;
 
@@ -25,6 +26,21 @@ public static class DataSeeder
         context.Rents.AddRange(rents);
 
         context.SaveChanges();
+
+        FixSequences(context);
+    }
+
+    private static void FixSequences(BikesDbContext context)
+    {
+        var tables = new[] { "bike_models", "bikes", "renters", "rents" };
+
+        foreach (var table in tables)
+        {
+            context.Database.ExecuteSqlRaw(
+                $@"SELECT setval(pg_get_serial_sequence('{table}', 'id'), 
+                    COALESCE((SELECT MAX(id) FROM {table}), 1), true);"
+            );
+        }
     }
 
     private static List<BikeModel> InitializeModels()

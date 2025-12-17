@@ -7,14 +7,16 @@ namespace Bikes.Application.Services;
 /// <summary>
 /// Implementation of bike service
 /// </summary>
-public class BikeService(IBikeRepository repository) : IBikeService
+public class BikeService(
+    IBikeRepository bikeRepository,
+    IBikeModelRepository bikeModelRepository) : IBikeService
 {
     /// <summary>
     /// Get all bikes
     /// </summary>
     public List<BikeDto> GetAll()
     {
-        return [.. repository.GetAllBikes().Select(b => new BikeDto
+        return [.. bikeRepository.GetAllBikes().Select(b => new BikeDto
         {
             Id = b.Id,
             SerialNumber = b.SerialNumber,
@@ -29,7 +31,7 @@ public class BikeService(IBikeRepository repository) : IBikeService
     /// </summary>
     public BikeDto? GetById(int id)
     {
-        var bike = repository.GetBikeById(id);
+        var bike = bikeRepository.GetBikeById(id);
         return bike == null ? null : new BikeDto
         {
             Id = bike.Id,
@@ -47,26 +49,25 @@ public class BikeService(IBikeRepository repository) : IBikeService
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        var models = repository.GetAllModels();
-        var model = models.FirstOrDefault(m => m.Id == request.ModelId)
-            ?? throw new InvalidOperationException("Model not found");
+        var modelExists = bikeModelRepository.GetModelById(request.ModelId) != null;
+        if (!modelExists)
+            throw new InvalidOperationException("Model not found");
 
         var newBike = new Bike
         {
-            Id = repository.GetAllBikes().Max(b => b.Id) + 1,
             SerialNumber = request.SerialNumber,
-            Model = model,
+            ModelId = request.ModelId,
             Color = request.Color,
             IsAvailable = true
         };
 
-        repository.AddBike(newBike);
+        bikeRepository.AddBike(newBike);
 
         return new BikeDto
         {
             Id = newBike.Id,
             SerialNumber = newBike.SerialNumber,
-            ModelId = newBike.Model.Id,
+            ModelId = newBike.ModelId,
             Color = newBike.Color,
             IsAvailable = newBike.IsAvailable
         };
@@ -79,24 +80,24 @@ public class BikeService(IBikeRepository repository) : IBikeService
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        var bike = repository.GetBikeById(id);
+        var bike = bikeRepository.GetBikeById(id);
         if (bike == null) return null;
 
-        var models = repository.GetAllModels();
-        var model = models.FirstOrDefault(m => m.Id == request.ModelId)
-            ?? throw new InvalidOperationException("Model not found");
+        var modelExists = bikeModelRepository.GetModelById(request.ModelId) != null;
+        if (!modelExists)
+            throw new InvalidOperationException("Model not found");
 
         bike.SerialNumber = request.SerialNumber;
-        bike.Model = model;
+        bike.ModelId = request.ModelId;
         bike.Color = request.Color;
 
-        repository.UpdateBike(bike);
+        bikeRepository.UpdateBike(bike);
 
         return new BikeDto
         {
             Id = bike.Id,
             SerialNumber = bike.SerialNumber,
-            ModelId = bike.Model.Id,
+            ModelId = bike.ModelId,
             Color = bike.Color,
             IsAvailable = bike.IsAvailable
         };
@@ -107,10 +108,10 @@ public class BikeService(IBikeRepository repository) : IBikeService
     /// </summary>
     public bool Delete(int id)
     {
-        var bike = repository.GetBikeById(id);
+        var bike = bikeRepository.GetBikeById(id);
         if (bike == null) return false;
 
-        repository.DeleteBike(id);
+        bikeRepository.DeleteBike(id);
         return true;
     }
 }

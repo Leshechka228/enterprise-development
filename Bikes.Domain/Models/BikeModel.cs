@@ -21,59 +21,59 @@ public class BikeModel
     /// </summary>
     [Required]
     [Column("name")]
-    public required string Name { get; set; }
+    public string Name { get; set; } = null!;
 
     /// <summary>
     /// Type of bicycle
     /// </summary>
     [Required]
     [Column("type")]
-    public required BikeType Type { get; set; }
+    public BikeType Type { get; set; }
 
     /// <summary>
     /// Wheel size in inches
     /// </summary>
     [Required]
     [Column("wheel_size")]
-    public required decimal WheelSize { get; set; }
+    public decimal WheelSize { get; set; }
 
     /// <summary>
     /// Maximum permissible passenger weight in kg
     /// </summary>
     [Required]
     [Column("max_weight")]
-    public required decimal MaxWeight { get; set; }
+    public decimal MaxWeight { get; set; }
 
     /// <summary>
     /// Bicycle weight in kg
     /// </summary>
     [Required]
     [Column("weight")]
-    public required decimal Weight { get; set; }
+    public decimal Weight { get; set; }
 
     /// <summary>
     /// Type of brakes
     /// </summary>
     [Required]
     [Column("brake_type")]
-    public required string BrakeType { get; set; }
+    public string BrakeType { get; set; } = null!;
 
     /// <summary>
     /// Model year
     /// </summary>
     [Required]
     [Column("model_year")]
-    public required int ModelYear { get; set; }
+    public int ModelYear { get; set; }
 
     /// <summary>
     /// Price per hour of rental
     /// </summary>
     [Required]
     [Column("price_per_hour")]
-    public required decimal PricePerHour { get; set; }
+    public decimal PricePerHour { get; set; }
 
     /// <summary>
     /// Navigation property for bikes
     /// </summary>
-    public virtual List<Bike> Bikes { get; set; } = new();
+    public virtual List<Bike> Bikes { get; set; } = [];
 }

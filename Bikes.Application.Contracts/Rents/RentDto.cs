@@ -13,25 +13,25 @@ public class RentDto
     /// <summary>
     /// Rented bike identifier
     /// </summary>
-    public required int BikeId { get; set; }
+    public int BikeId { get; set; }
 
     /// <summary>
     /// Renter identifier
     /// </summary>
-    public required int RenterId { get; set; }
+    public int RenterId { get; set; }
 
     /// <summary>
     /// Rental start time
     /// </summary>
-    public required DateTime StartTime { get; set; }
+    public DateTime StartTime { get; set; }
 
     /// <summary>
     /// Rental duration in hours
     /// </summary>
-    public required int DurationHours { get; set; }
+    public int DurationHours { get; set; }
 
     /// <summary>
     /// Total rental cost
     /// </summary>
-    public required decimal TotalCost { get; set; }
+    public decimal TotalCost { get; set; }
 }

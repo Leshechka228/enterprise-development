@@ -19,9 +19,15 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<BikesDbContext>(options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("bikes-db"));
+    options.EnableSensitiveDataLogging();
+    options.LogTo(Console.WriteLine, LogLevel.Information);
 });
 
 builder.Services.AddScoped<IBikeRepository, EfCoreBikeRepository>();
+builder.Services.AddScoped<IBikeModelRepository, EfCoreBikeModelRepository>();
+builder.Services.AddScoped<IRenterRepository, EfCoreRenterRepository>();
+builder.Services.AddScoped<IRentRepository, EfCoreRentRepository>();
+
 builder.Services.AddScoped<IBikeService, BikeService>();
 builder.Services.AddScoped<IBikeModelService, BikeModelService>();
 builder.Services.AddScoped<IRenterService, RenterService>();

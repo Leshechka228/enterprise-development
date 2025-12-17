@@ -20,6 +20,8 @@ public abstract class CrudControllerBase<TDto, TCreateUpdateDto> : ControllerBas
     /// Get all entities
     /// </summary>
     [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public virtual ActionResult<List<TDto>> GetAll()
     {
         try
@@ -37,6 +39,9 @@ public abstract class CrudControllerBase<TDto, TCreateUpdateDto> : ControllerBas
     /// Get entity by id
     /// </summary>
     [HttpGet("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public virtual ActionResult<TDto> GetById(int id)
     {
         try
@@ -54,6 +59,9 @@ public abstract class CrudControllerBase<TDto, TCreateUpdateDto> : ControllerBas
     /// Create new entity
     /// </summary>
     [HttpPost]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public virtual ActionResult<TDto> Create([FromBody] TCreateUpdateDto request)
     {
         try
@@ -80,6 +88,10 @@ public abstract class CrudControllerBase<TDto, TCreateUpdateDto> : ControllerBas
     /// Update entity
     /// </summary>
     [HttpPut("{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public virtual ActionResult<TDto> Update(int id, [FromBody] TCreateUpdateDto request)
     {
         try
@@ -106,6 +118,9 @@ public abstract class CrudControllerBase<TDto, TCreateUpdateDto> : ControllerBas
     /// Delete entity
     /// </summary>
     [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public virtual ActionResult Delete(int id)
     {
         try

@@ -7,21 +7,24 @@ namespace Bikes.Application.Services;
 /// <summary>
 /// Implementation of rent service
 /// </summary>
-public class RentService(IBikeRepository repository) : IRentService
+public class RentService(
+    IRentRepository rentRepository,
+    IBikeRepository bikeRepository,
+    IRenterRepository renterRepository) : IRentService
 {
     /// <summary>
     /// Get all rents
     /// </summary>
     public List<RentDto> GetAll()
     {
-        return [.. repository.GetAllRents().Select(r => new RentDto
+        return [.. rentRepository.GetAllRents().Select(r => new RentDto
         {
             Id = r.Id,
             BikeId = r.Bike.Id,
             RenterId = r.Renter.Id,
             StartTime = r.StartTime,
             DurationHours = r.DurationHours,
-            TotalCost = r.TotalCost
+            TotalCost = r.Bike.Model.PricePerHour * r.DurationHours
         })];
     }
 
@@ -30,7 +33,7 @@ public class RentService(IBikeRepository repository) : IRentService
     /// </summary>
     public RentDto? GetById(int id)
     {
-        var rent = repository.GetRentById(id);
+        var rent = rentRepository.GetRentById(id);
         return rent == null ? null : new RentDto
         {
             Id = rent.Id,
@@ -38,7 +41,7 @@ public class RentService(IBikeRepository repository) : IRentService
             RenterId = rent.Renter.Id,
             StartTime = rent.StartTime,
             DurationHours = rent.DurationHours,
-            TotalCost = rent.TotalCost
+            TotalCost = rent.Bike.Model.PricePerHour * rent.DurationHours
         };
     }
 
@@ -49,25 +52,27 @@ public class RentService(IBikeRepository repository) : IRentService
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        var bike = repository.GetBikeById(request.BikeId);
-        var renter = repository.GetRenterById(request.RenterId);
-        var rents = repository.GetAllRents();
+        var bike = bikeRepository.GetBikeById(request.BikeId);
+        var renter = renterRepository.GetRenterById(request.RenterId);
+        var rents = rentRepository.GetAllRents();
 
         if (bike == null)
             throw new InvalidOperationException("Bike not found");
         if (renter == null)
             throw new InvalidOperationException("Renter not found");
 
+        var maxId = rents.Count == 0 ? 0 : rents.Max(r => r.Id);
+
         var newRent = new Rent
         {
-            Id = rents.Max(r => r.Id) + 1,
+            Id = maxId + 1,
             Bike = bike,
             Renter = renter,
             StartTime = request.StartTime,
             DurationHours = request.DurationHours
         };
 
-        repository.AddRent(newRent);
+        rentRepository.AddRent(newRent);
 
         return new RentDto
         {
@@ -76,7 +81,7 @@ public class RentService(IBikeRepository repository) : IRentService
             RenterId = newRent.Renter.Id,
             StartTime = newRent.StartTime,
             DurationHours = newRent.DurationHours,
-            TotalCost = newRent.TotalCost
+            TotalCost = newRent.Bike.Model.PricePerHour * newRent.DurationHours
         };
     }
 
@@ -87,12 +92,12 @@ public class RentService(IBikeRepository repository) : IRentService
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        var rent = repository.GetRentById(id);
+        var rent = rentRepository.GetRentById(id);
         if (rent == null) return null;
 
-        var bike = repository.GetBikeById(request.BikeId)
+        var bike = bikeRepository.GetBikeById(request.BikeId)
             ?? throw new InvalidOperationException("Bike not found");
-        var renter = repository.GetRenterById(request.RenterId)
+        var renter = renterRepository.GetRenterById(request.RenterId)
             ?? throw new InvalidOperationException("Renter not found");
 
         rent.Bike = bike;
@@ -100,7 +105,7 @@ public class RentService(IBikeRepository repository) : IRentService
         rent.StartTime = request.StartTime;
         rent.DurationHours = request.DurationHours;
 
-        repository.UpdateRent(rent);
+        rentRepository.UpdateRent(rent);
 
         return new RentDto
         {
@@ -109,7 +114,7 @@ public class RentService(IBikeRepository repository) : IRentService
             RenterId = rent.Renter.Id,
             StartTime = rent.StartTime,
             DurationHours = rent.DurationHours,
-            TotalCost = rent.TotalCost
+            TotalCost = rent.Bike.Model.PricePerHour * rent.DurationHours
         };
     }
 
@@ -118,10 +123,10 @@ public class RentService(IBikeRepository repository) : IRentService
     /// </summary>
     public bool Delete(int id)
     {
-        var rent = repository.GetRentById(id);
+        var rent = rentRepository.GetRentById(id);
         if (rent == null) return false;
 
-        repository.DeleteRent(id);
+        rentRepository.DeleteRent(id);
         return true;
     }
 }

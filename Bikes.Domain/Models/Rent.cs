@@ -45,14 +45,14 @@ public class Rent
     /// </summary>
     [Required]
     [Column("start_time")]
-    public required DateTime StartTime { get; set; }
+    public DateTime StartTime { get; set; }
 
     /// <summary>
     /// Rental duration in hours
     /// </summary>
     [Required]
     [Column("duration_hours")]
-    public required int DurationHours { get; set; }
+    public int DurationHours { get; set; }
 
     /// <summary>
     /// Total rental cost

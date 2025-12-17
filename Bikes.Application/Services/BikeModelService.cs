@@ -7,14 +7,14 @@ namespace Bikes.Application.Services;
 /// <summary>
 /// Implementation of bike model service
 /// </summary>
-public class BikeModelService(IBikeRepository repository) : IBikeModelService
+public class BikeModelService(IBikeModelRepository bikeModelRepository) : IBikeModelService
 {
     /// <summary>
     /// Get all bike models
     /// </summary>
     public List<BikeModelDto> GetAll()
     {
-        return [.. repository.GetAllModels().Select(m => new BikeModelDto
+        return [.. bikeModelRepository.GetAllModels().Select(m => new BikeModelDto
         {
             Id = m.Id,
             Name = m.Name,
@@ -33,7 +33,7 @@ public class BikeModelService(IBikeRepository repository) : IBikeModelService
     /// </summary>
     public BikeModelDto? GetById(int id)
     {
-        var model = repository.GetModelById(id);
+        var model = bikeModelRepository.GetModelById(id);
         return model == null ? null : new BikeModelDto
         {
             Id = model.Id,
@@ -58,10 +58,12 @@ public class BikeModelService(IBikeRepository repository) : IBikeModelService
         if (!Enum.TryParse<BikeType>(request.Type, out var bikeType))
             throw new InvalidOperationException($"Invalid bike type: {request.Type}");
 
-        var models = repository.GetAllModels();
+        var models = bikeModelRepository.GetAllModels();
+        var maxId = models.Count == 0 ? 0 : models.Max(m => m.Id);
+
         var newModel = new BikeModel
         {
-            Id = models.Max(m => m.Id) + 1,
+            Id = maxId + 1,
             Name = request.Name,
             Type = bikeType,
             WheelSize = request.WheelSize,
@@ -72,7 +74,7 @@ public class BikeModelService(IBikeRepository repository) : IBikeModelService
             PricePerHour = request.PricePerHour
         };
 
-        repository.AddModel(newModel);
+        bikeModelRepository.AddModel(newModel);
 
         return new BikeModelDto
         {
@@ -98,7 +100,7 @@ public class BikeModelService(IBikeRepository repository) : IBikeModelService
         if (!Enum.TryParse<BikeType>(request.Type, out var bikeType))
             throw new InvalidOperationException($"Invalid bike type: {request.Type}");
 
-        var model = repository.GetModelById(id);
+        var model = bikeModelRepository.GetModelById(id);
         if (model == null) return null;
 
         model.Name = request.Name;
@@ -110,7 +112,7 @@ public class BikeModelService(IBikeRepository repository) : IBikeModelService
         model.ModelYear = request.ModelYear;
         model.PricePerHour = request.PricePerHour;
 
-        repository.UpdateModel(model);
+        bikeModelRepository.UpdateModel(model);
 
         return new BikeModelDto
         {
@@ -131,10 +133,10 @@ public class BikeModelService(IBikeRepository repository) : IBikeModelService
     /// </summary>
     public bool Delete(int id)
     {
-        var model = repository.GetModelById(id);
+        var model = bikeModelRepository.GetModelById(id);
         if (model == null) return false;
 
-        repository.DeleteModel(id);
+        bikeModelRepository.DeleteModel(id);
         return true;
     }
 }

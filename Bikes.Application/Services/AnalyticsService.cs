@@ -8,14 +8,17 @@ namespace Bikes.Application.Services;
 /// <summary>
 /// Implementation of analytics service
 /// </summary>
-public class AnalyticsService(IBikeRepository repository) : IAnalyticsService
+public class AnalyticsService(
+    IBikeRepository bikeRepository,
+    IRentRepository rentRepository,
+    IBikeModelRepository bikeModelRepository) : IAnalyticsService
 {
     /// <summary>
     /// Get all sport bikes
-    /// </summary>
+    /// </summary> 
     public List<BikeDto> GetSportBikes()
     {
-        return [.. repository.GetAllBikes()
+        return [.. bikeRepository.GetAllBikes()
             .Where(b => b.Model.Type == BikeType.Sport)
             .Select(b => new BikeDto
             {
@@ -32,7 +35,7 @@ public class AnalyticsService(IBikeRepository repository) : IAnalyticsService
     /// </summary>
     public List<BikeModelAnalyticsDto> GetTop5ModelsByProfit()
     {
-        var rents = repository.GetAllRents();
+        var rents = rentRepository.GetAllRents();
 
         return [.. rents
             .GroupBy(r => r.Bike.Model)
@@ -42,7 +45,7 @@ public class AnalyticsService(IBikeRepository repository) : IAnalyticsService
                 Name = g.Key.Name,
                 Type = g.Key.Type.ToString(),
                 PricePerHour = g.Key.PricePerHour,
-                TotalProfit = g.Sum(r => r.TotalCost),
+                TotalProfit = g.Sum(r => r.Bike.Model.PricePerHour * r.DurationHours),
                 TotalDuration = g.Sum(r => r.DurationHours)
             })
             .OrderByDescending(x => x.TotalProfit)
@@ -54,7 +57,7 @@ public class AnalyticsService(IBikeRepository repository) : IAnalyticsService
     /// </summary>
     public List<BikeModelAnalyticsDto> GetTop5ModelsByRentalDuration()
     {
-        var rents = repository.GetAllRents();
+        var rents = rentRepository.GetAllRents();
 
         return [.. rents
             .GroupBy(r => r.Bike.Model)
@@ -64,7 +67,7 @@ public class AnalyticsService(IBikeRepository repository) : IAnalyticsService
                 Name = g.Key.Name,
                 Type = g.Key.Type.ToString(),
                 PricePerHour = g.Key.PricePerHour,
-                TotalProfit = g.Sum(r => r.TotalCost),
+                TotalProfit = g.Sum(r => r.Bike.Model.PricePerHour * r.DurationHours),
                 TotalDuration = g.Sum(r => r.DurationHours)
             })
             .OrderByDescending(x => x.TotalDuration)
@@ -76,7 +79,7 @@ public class AnalyticsService(IBikeRepository repository) : IAnalyticsService
     /// </summary>
     public RentalStatistics GetRentalStatistics()
     {
-        var durations = repository.GetAllRents()
+        var durations = rentRepository.GetAllRents()
             .Select(r => r.DurationHours);
 
         return new RentalStatistics(
@@ -91,7 +94,7 @@ public class AnalyticsService(IBikeRepository repository) : IAnalyticsService
     /// </summary>
     public Dictionary<string, int> GetTotalRentalTimeByBikeType()
     {
-        return repository.GetAllRents()
+        return rentRepository.GetAllRents()
             .GroupBy(r => r.Bike.Model.Type)
             .ToDictionary(
                 g => g.Key.ToString(),
@@ -104,7 +107,7 @@ public class AnalyticsService(IBikeRepository repository) : IAnalyticsService
     /// </summary>
     public List<RenterAnalyticsDto> GetTopRentersByRentalCount()
     {
-        return [.. repository.GetAllRents()
+        return [.. rentRepository.GetAllRents()
             .GroupBy(r => r.Renter)
             .Select(g => new RenterAnalyticsDto
             {

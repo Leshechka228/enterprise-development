@@ -6,12 +6,8 @@ namespace Bikes.Infrastructure.EfCore;
 /// <summary>
 /// Database context for bikes rental system
 /// </summary>
-public class BikesDbContext : DbContext
+public class BikesDbContext(DbContextOptions<BikesDbContext> options) : DbContext(options)
 {
-    public BikesDbContext(DbContextOptions<BikesDbContext> options) : base(options)
-    {
-    }
-
     /// <summary>
     /// Bike models table
     /// </summary>
