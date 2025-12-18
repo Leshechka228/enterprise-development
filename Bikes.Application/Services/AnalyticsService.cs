@@ -10,8 +10,7 @@ namespace Bikes.Application.Services;
 /// </summary>
 public class AnalyticsService(
     IBikeRepository bikeRepository,
-    IRentRepository rentRepository,
-    IBikeModelRepository bikeModelRepository) : IAnalyticsService
+    IRentRepository rentRepository) : IAnalyticsService
 {
     /// <summary>
     /// Get all sport bikes

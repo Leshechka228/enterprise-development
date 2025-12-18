@@ -36,10 +36,14 @@ public static class DataSeeder
 
         foreach (var table in tables)
         {
-            context.Database.ExecuteSqlRaw(
-                $@"SELECT setval(pg_get_serial_sequence('{table}', 'id'), 
-                    COALESCE((SELECT MAX(id) FROM {table}), 1), true);"
-            );
+            var sql = $@"
+            SELECT setval(
+                pg_get_serial_sequence('{table}', 'id'), 
+                COALESCE((SELECT MAX(id) FROM {table}), 1), 
+                true
+            )";
+
+            context.Database.ExecuteSqlRaw(sql);
         }
     }
 
