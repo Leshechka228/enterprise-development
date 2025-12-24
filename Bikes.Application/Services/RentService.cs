@@ -13,6 +13,29 @@ public class RentService(
     IRenterRepository renterRepository) : IRentService
 {
     /// <summary>
+    /// Receive and process list of rent contracts from Kafka
+    /// </summary>
+    public async Task ReceiveContract(IList<RentCreateUpdateDto> contracts)
+    {
+        if (contracts == null || contracts.Count == 0)
+            return;
+
+        foreach (var contract in contracts)
+        {
+            try
+            {
+                Create(contract);
+            }
+            catch (InvalidOperationException)
+            {
+                continue;
+            }
+        }
+
+        await Task.CompletedTask;
+    }
+
+    /// <summary>
     /// Get all rents
     /// </summary>
     public List<RentDto> GetAll()

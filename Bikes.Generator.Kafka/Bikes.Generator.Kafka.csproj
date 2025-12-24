@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>dotnet-Bikes.Generator.Kafka-b1d58c3b-9059-4dd2-8b92-981ad7eb6764</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Bogus" Version="35.6.3" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
+    <PackageReference Include="Polly" Version="8.6.5" />
+    <PackageReference Include="Confluent.Kafka" Version="2.6.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Bikes.Application.Contracts\Bikes.Application.Contracts.csproj" />
+    <ProjectReference Include="..\Bikes.ServiceDefaults\Bikes.ServiceDefaults.csproj" />
+  </ItemGroup>
+
+</Project>

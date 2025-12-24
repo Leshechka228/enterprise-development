@@ -63,4 +63,3 @@ public class EfCoreBikeRepository(BikesDbContext context) : IBikeRepository
         }
     }
 }
-// НИЧЕГО БОЛЬШЕ ТУТ НЕ ДОЛЖНО БЫТЬ!
