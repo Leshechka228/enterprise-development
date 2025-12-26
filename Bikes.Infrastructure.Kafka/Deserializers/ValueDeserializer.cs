@@ -10,14 +10,14 @@ public class ValueDeserializer : IDeserializer<IList<RentCreateUpdateDto>>
     public IList<RentCreateUpdateDto> Deserialize(ReadOnlySpan<byte> data, bool isNull, SerializationContext context)
     {
         if (isNull || data.Length == 0)
-            return new List<RentCreateUpdateDto>();
+            return [];
 
         var json = Encoding.UTF8.GetString(data);
 
         try
         {
             var result = JsonSerializer.Deserialize<IList<RentCreateUpdateDto>>(json);
-            return result ?? new List<RentCreateUpdateDto>();
+            return result ?? [];
         }
         catch (JsonException ex)
         {

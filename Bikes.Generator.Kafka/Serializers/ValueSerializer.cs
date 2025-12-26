@@ -13,7 +13,7 @@ public class ValueSerializer : ISerializer<IList<RentCreateUpdateDto>>
     public byte[] Serialize(IList<RentCreateUpdateDto> data, SerializationContext context)
     {
         if (data == null || data.Count == 0)
-            return Array.Empty<byte>();
+            return [];
 
         var json = JsonSerializer.Serialize(data);
         return Encoding.UTF8.GetBytes(json);

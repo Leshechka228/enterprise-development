@@ -34,7 +34,7 @@ public class RandomDataGenerator : IDataGenerator
 
         _bikeFaker = new Faker<BikeCreateUpdateDto>()
             .RuleFor(b => b.SerialNumber, f => $"SN{f.Random.AlphaNumeric(8).ToUpper()}")
-            .RuleFor(b => b.ModelId, f => f.Random.Int(1, 100))
+            .RuleFor(b => b.ModelId, f => f.Random.Int(1, 11))
             .RuleFor(b => b.Color, f => f.PickRandom(colors));
 
         _renterFaker = new Faker<RenterCreateUpdateDto>()
@@ -42,9 +42,9 @@ public class RandomDataGenerator : IDataGenerator
             .RuleFor(r => r.Phone, f => f.Phone.PhoneNumber("+7##########"));
 
         _rentFaker = new Faker<RentCreateUpdateDto>()
-            .RuleFor(r => r.BikeId, f => f.Random.Int(1, 1000))
-            .RuleFor(r => r.RenterId, f => f.Random.Int(1, 500))
-            .RuleFor(r => r.StartTime, f => f.Date.Recent(30))
+            .RuleFor(r => r.BikeId, f => f.Random.Int(1, 10))
+            .RuleFor(r => r.RenterId, f => f.Random.Int(1, 12))
+            .RuleFor(r => r.StartTime, f => f.Date.Recent(30).ToUniversalTime())
             .RuleFor(r => r.DurationHours, f => f.Random.Int(1, 168));
     }
 

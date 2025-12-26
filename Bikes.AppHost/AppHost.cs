@@ -25,11 +25,12 @@ var consumer = builder.AddProject<Projects.Bikes_Infrastructure_Kafka>("bikes-co
     .WithReference(kafka)
     .WithReference(bikesDb)
     .WaitFor(kafka)
+    .WaitFor(bikesDb)
     .WithEnvironment("Kafka__Topic", topic)
     .WithEnvironment("Kafka__GroupId", groupId)
     .WithEnvironment("ConnectionStrings__bikes-db", bikesDb);
 
-var generator = builder.AddProject<Projects.Bikes_Generator_Kafka>("bikes-generator")
+_ = builder.AddProject<Projects.Bikes_Generator_Kafka>("bikes-generator")
     .WithReference(kafka)
     .WaitFor(kafka)
     .WaitFor(api)

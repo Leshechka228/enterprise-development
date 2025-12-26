@@ -38,8 +38,8 @@ public class KafkaProducerService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _logger.LogInformation("Waiting 30 seconds for Kafka to become fully ready...");
-        await Task.Delay(60000, stoppingToken);
+        _logger.LogInformation("Waiting 15 seconds for Kafka to become fully ready...");
+        await Task.Delay(15000, stoppingToken);
 
         _logger.LogInformation("Starting to send {total} messages with {time}s interval with {batch} messages in batch",
             _payloadLimit, _waitTime / 1000, _batchSize);

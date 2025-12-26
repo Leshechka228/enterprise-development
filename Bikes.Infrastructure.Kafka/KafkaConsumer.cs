@@ -138,15 +138,15 @@ public class KafkaConsumer : BackgroundService
     {
         _logger.LogInformation("Waiting for Kafka to become available...");
 
+        using var adminClient = new AdminClientBuilder(new AdminClientConfig
+        {
+            BootstrapServers = _bootstrapServers
+        }).Build();
+
         for (var i = 0; i < 30; i++)
         {
             try
             {
-                using var adminClient = new AdminClientBuilder(new AdminClientConfig
-                {
-                    BootstrapServers = _bootstrapServers
-                }).Build();
-
                 var metadata = adminClient.GetMetadata(TimeSpan.FromSeconds(5));
                 _logger.LogInformation("Kafka is available. Brokers: {BrokerCount}", metadata.Brokers.Count);
                 return;
@@ -198,5 +198,6 @@ public class KafkaConsumer : BackgroundService
         }
 
         base.Dispose();
+        GC.SuppressFinalize(this);
     }
 }

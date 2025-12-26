@@ -40,6 +40,22 @@ public class EfCoreRentRepository(BikesDbContext context) : IRentRepository
     public void AddRent(Rent rent)
     {
         ArgumentNullException.ThrowIfNull(rent);
+
+        if (rent.Bike != null && context.Entry(rent.Bike).State == EntityState.Detached)
+        {
+            context.Attach(rent.Bike);
+            
+            if (rent.Bike.Model != null && context.Entry(rent.Bike.Model).State == EntityState.Detached)
+            {
+                context.Attach(rent.Bike.Model);
+            }
+        }
+        
+        if (rent.Renter != null && context.Entry(rent.Renter).State == EntityState.Detached)
+        {
+            context.Attach(rent.Renter);
+        }
+        
         context.Rents.Add(rent);
         context.SaveChanges();
     }
